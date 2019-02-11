@@ -94,9 +94,7 @@ function returnArgumentsArray() {
    console.log(newSum()) выведет 6
  */
 function bindFunction(fn, ...args) {
-    return function () {
-        return args.reduce((first, last) => first + last);
-    };
+    return fn.bind(null, ...args);
 }
 
 export {
