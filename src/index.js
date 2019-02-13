@@ -68,13 +68,20 @@ function upperProps(obj) {
 function slice(array, from, to) {
     let result = [];
 
-    return (function () {
-        for (let i = from; i < to; i++) {
-            result.push(array[i]);
-        }
+    if (!from || from < 0) {
+        from = 0;
+    }
+    if (!to || to > array.length) {
+        to = array.length;
+    }
+    if (to < 0) {
+        to = array.length + to;
+    }
+    for (let i = from; i < to; i++) {
+        result.push(array[i]);
+    }
 
-        return result;
-    })();
+    return result;
 }
 
 /*
