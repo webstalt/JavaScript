@@ -9,7 +9,7 @@
 
 /*
  homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
+ Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
  Пример:
    const newDiv = document.createElement('div');
@@ -27,6 +27,28 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function getRandomSize() {
+        let randomNum = Math.floor(Math.random() * 201);
+        return `${randomNum}px`;
+    }
+    let div = document.createElement('div');
+    div.classList.add("draggable-div");
+    div.style.backgroundColor = getRandomColor();
+    div.style.width = getRandomSize();
+    div.style.height = getRandomSize();
+    div.style.position = "relative";
+    div.style.top = getRandomSize();
+    div.style.left = getRandomSize();
+    return div;
 }
 
 /*
@@ -38,11 +60,17 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.addEventListener('mousedown', e => {
+        currentDrag = target;
+        startX = e.offsetX;
+        startY = e.offsetY;
+    });
+    target.addEventListener('mouseup', () => currentDrag = false);
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
-addDivButton.addEventListener('click', function() {
+addDivButton.addEventListener('click', function () {
     // создать новый div
     const div = createDiv();
 
