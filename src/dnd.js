@@ -60,6 +60,9 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    let currentDrag;
+    let startX = 0;
+    let startY = 0;
     target.addEventListener('mousedown', e => {
         currentDrag = target;
         startX = e.offsetX;
