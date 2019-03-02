@@ -22,7 +22,7 @@
 
 /*
  homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
+ Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
  Пример:
    const newDiv = document.createElement('div');
@@ -37,6 +37,18 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    return new Promise((resolve, reject) => {
+        fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
+            .then(response => {
+                if (response.status >= 400) {
+                    return Promise.reject();
+                }
+                return response.json();
+            })
+            .then(towns => {
+                resolve(towns.sort((a, b) => b.name > a.name ? -1 : b.name < a.name ? 1 : 0));
+            });
+    });
 }
 
 /*
@@ -51,6 +63,7 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    return full.toLowerCase().includes(chunk.toLowerCase());
 }
 
 /* Блок с надписью "Загрузка" */
@@ -62,8 +75,47 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
+const turnOnLoading = () => {
+    loadingBlock.style.display = "block";
+    filterBlock.style.display = "none";
+}
+
+const turnOffLoading = () => {
+    loadingBlock.style.display = "none";
+    filterBlock.style.display = "block";
+}
+
+const clearSearch = () => {
+    while (filterResult.lastChild) {
+        filterResult.removeChild(filterResult.lastChild);
+    }
+}
+
+turnOffLoading();
+let towns = [];
+
+filterInput.addEventListener('keyup', async function () {
     // это обработчик нажатия кливиш в текстовом поле
+    turnOnLoading();
+    clearSearch();
+
+    if (filterInput.value !== '') {
+        if (towns.length === 0) {
+            towns = await loadTowns();
+        }
+
+        for (const town of towns) {
+            if (isMatching(town.name, filterInput.value)) {
+                const li = document.createElement('li');
+                li.textContent = town.name;
+                filterResult.appendChild(li);
+            }
+        }
+    }
+    turnOffLoading();
+    filterInput.focus();
+
+    return filterResult;
 });
 
 export {
