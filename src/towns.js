@@ -17,7 +17,7 @@
  *** Часть со звездочкой ***
  Если загрузка городов не удалась (например, отключился интернет или сервер вернул ошибку),
  то необходимо показать надпись "Не удалось загрузить города" и кнопку "Повторить".
- При клике на кнопку, процесс загруки повторяется заново
+ При клике на кнопку процесс загрузки повторяется заново
  */
 
 /*
@@ -47,6 +47,9 @@ function loadTowns() {
             })
             .then(towns => {
                 resolve(towns.sort((a, b) => b.name > a.name ? -1 : b.name < a.name ? 1 : 0));
+            })
+            .catch(e => {
+                reject();
             });
     });
 }
@@ -94,14 +97,27 @@ const clearSearch = () => {
 turnOffLoading();
 let towns = [];
 
-filterInput.addEventListener('keyup', async function () {
+async function showTowns() {
     // это обработчик нажатия кливиш в текстовом поле
     turnOnLoading();
     clearSearch();
 
     if (filterInput.value !== '') {
         if (towns.length === 0) {
-            towns = await loadTowns();
+            try {
+                towns = await loadTowns();
+            } catch (error) {
+                turnOffLoading();
+                const div = document.createElement('div');
+                div.textContent = "Не удалось загрузить города";
+                const button = document.createElement('button');
+                button.innerText = "Повторить";
+                button.classList.add('retry');
+                filterResult.appendChild(div);
+                filterResult.appendChild(button);
+                document.querySelector('.retry').addEventListener('click', showTowns);
+                return;
+            }
         }
 
         for (const town of towns) {
@@ -116,7 +132,9 @@ filterInput.addEventListener('keyup', async function () {
     filterInput.focus();
 
     return filterResult;
-});
+}
+
+filterInput.addEventListener('keyup', showTowns);
 
 export {
     loadTowns,
