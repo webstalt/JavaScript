@@ -16,8 +16,8 @@
  7.3: На странице должно быть текстовое поле для фильтрации cookie
  В таблице должны быть только те cookie, в имени или значении которых, хотя бы частично, есть введенное значение
  Если в поле фильтра пусто, то должны выводиться все доступные cookie
- Если дабавляемая cookie не соответсвуте фильтру, то она должна быть добавлена только в браузер, но не в таблицу
- Если добавляется cookie, с именем уже существующией cookie и ее новое значение не соответствует фильтру,
+ Если дoбавляемая cookie не соответсвуeт фильтру, то она должна быть добавлена только в браузер, но не в таблицу
+ Если добавляется cookie, с именем уже существующей cookie и ее новое значение не соответствует фильтру,
  то ее значение должно быть обновлено в браузере, а из таблицы cookie должна быть удалена
 
  Запрещено использовать сторонние библиотеки. Разрешено пользоваться только тем, что встроено в браузер
@@ -32,21 +32,52 @@
    homeworkContainer.appendChild(newDiv);
  */
 const homeworkContainer = document.querySelector('#homework-container');
+
 // текстовое поле для фильтрации cookie
 const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
+
 // текстовое поле с именем cookie
 const addNameInput = homeworkContainer.querySelector('#add-name-input');
+
 // текстовое поле со значением cookie
 const addValueInput = homeworkContainer.querySelector('#add-value-input');
+
 // кнопка "добавить cookie"
 const addButton = homeworkContainer.querySelector('#add-button');
+
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
+filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
 });
 
+const displayCookies = () => {
+    let parsedCookies;
+    // add clear all
+    document.cookie.split('; ').reduce((prev, current) => {
+        const [name, value] = current.split('=');
+        prev[name] = value;
+        parsedCookies = prev;
+        return prev;
+    }, {})
+
+    for (let cookie in parsedCookies) {
+        let tr = document.createElement('tr');
+        listTable.appendChild(tr);
+        let tdName = document.createElement('td');
+        let tdValue = document.createElement('td');
+        tr.appendChild(tdName);
+        tr.appendChild(tdValue);
+        tdName.innerText = cookie;
+        tdValue.innerText = parsedCookies[cookie];
+    }
+}
+displayCookies();
+
 addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    addNameInput.value = '';
+    addValueInput.value = '';
+    displayCookies();
 });

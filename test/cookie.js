@@ -1,5 +1,5 @@
 import assert from 'assert';
-let template = require('../src/cookie-content.hbs');
+let template = require('../cookie-content.hbs');
 
 function getCookies() {
     return document.cookie
@@ -37,7 +37,7 @@ describe('ДЗ 7.2 - Cookie editor', () => {
             }
         });
 
-        it('на старнице должны быть элементы с нужными id', () => {
+        it('на стрaнице должны быть элементы с нужными id', () => {
             filterNameInput = homeworkContainer.querySelector('#filter-name-input');
             addNameInput = homeworkContainer.querySelector('#add-name-input');
             addValueInput = homeworkContainer.querySelector('#add-value-input');
