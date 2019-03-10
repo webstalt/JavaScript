@@ -50,10 +50,13 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 const showCookieObj = () => {
     let allCookies;
+
     document.cookie.split('; ').reduce((prev, current) => {
         const [name, value] = current.split('=');
+
         prev[name] = value;
         allCookies = prev;
+
         return prev;
     }, {});
 
@@ -63,6 +66,7 @@ const showCookieObj = () => {
 const deleteCookie = (name) => {
     let expires = '';
     let d = new Date();
+
     d.setTime(d.getTime() - 8000);
     expires = d.toUTCString();
 
@@ -70,18 +74,17 @@ const deleteCookie = (name) => {
 };
 
 const clearTable = () => {
-    while (listTable.lastChild) {
-        listTable.removeChild(listTable.lastChild);
-    }
+    listTable.innerHTML = '';
 };
 
 const createRow = (cookie, allCookies) => {
     let tr = document.createElement('tr');
-    listTable.appendChild(tr);
     let tdName = document.createElement('td');
     let tdValue = document.createElement('td');
     let tdDelete = document.createElement('td');
     let deleteButton = document.createElement('button');
+
+    listTable.appendChild(tr);
     tr.appendChild(tdName);
     tr.appendChild(tdValue);
     tr.appendChild(tdDelete);
@@ -100,28 +103,36 @@ const createRow = (cookie, allCookies) => {
 const displayCookies = (filterValue) => {
     let allCookies = showCookieObj();
 
-    for (let cookie in allCookies) {
-        if (!cookie) return;
+    if (!allCookies) {
+        return;
+    }
 
-        if (filterValue && filterValue.length) {
-            if (cookie.indexOf(filterValue) !== -1 || allCookies[cookie].indexOf(filterValue) !== -1) {
+    for (let cookie in allCookies) {
+        if (allCookies.hasOwnProperty(cookie)) {
+            if (!cookie) {
+                return;
+            }
+
+            if (filterValue && filterValue.length) {
+                if (cookie.indexOf(filterValue) !== -1 || allCookies[cookie].indexOf(filterValue) !== -1) {
+                    createRow(cookie, allCookies);
+                }
+            } else {
                 createRow(cookie, allCookies);
             }
-        } else {
-            createRow(cookie, allCookies);
         }
     }
 };
 
 const addNewCookie = () => {
-    if (!addNameInput.value) return;
+    if (!addNameInput.value) {
+        return;
+    }
     document.cookie = `${addNameInput.value}=${addValueInput.value}`;
 };
 
 const addNewCookieEvent = () => {
     addNewCookie();
-    addNameInput.value = '';
-    addValueInput.value = '';
     clearTable();
     displayCookies(filterNameInput.value);
 }
