@@ -25,7 +25,7 @@
 
 /*
  homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
+ Если вы создаете новые html-элементы и добавляете их на страницу, то добавляйте их только в этот контейнер
 
  Пример:
    const newDiv = document.createElement('div');
@@ -52,32 +52,71 @@ filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
 });
 
-const displayCookies = () => {
-    let parsedCookies;
-    // add clear all
+const showCookieObj = () => {
+    let allCookies;
     document.cookie.split('; ').reduce((prev, current) => {
         const [name, value] = current.split('=');
         prev[name] = value;
-        parsedCookies = prev;
+        allCookies = prev;
         return prev;
-    }, {})
+    }, {});
 
-    for (let cookie in parsedCookies) {
+    return allCookies;
+};
+
+const deleteCookie = (name) => {
+    let expires = '';
+    let d = new Date();
+    d.setTime(d.getTime() - 8000);
+    expires = d.toUTCString();
+
+    document.cookie = `${name}=nope; expires=${expires}`;
+};
+
+const clearTable = () => {
+    while (listTable.lastChild) {
+        listTable.removeChild(listTable.lastChild);
+    }
+};
+
+const displayCookies = () => {
+    let allCookies = showCookieObj();
+
+    for (let cookie in allCookies) {
+        if (!cookie) return;
         let tr = document.createElement('tr');
         listTable.appendChild(tr);
         let tdName = document.createElement('td');
         let tdValue = document.createElement('td');
+        let tdDelete = document.createElement('td');
+        let deleteButton = document.createElement('button');
         tr.appendChild(tdName);
         tr.appendChild(tdValue);
+        tr.appendChild(tdDelete);
         tdName.innerText = cookie;
-        tdValue.innerText = parsedCookies[cookie];
+        tdValue.innerText = allCookies[cookie];
+        tdDelete.appendChild(deleteButton);
+        deleteButton.innerHTML = 'удалить';
+
+        deleteButton.addEventListener('click', () => {
+            deleteCookie(cookie)
+            clearTable();
+            displayCookies();
+        });
     }
-}
-displayCookies();
+};
+
+const addNewCookie = () => {
+    if (!addNameInput.value) return;
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+};
 
 addButton.addEventListener('click', () => {
-    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    addNewCookie();
     addNameInput.value = '';
     addValueInput.value = '';
+    clearTable();
     displayCookies();
 });
+
+displayCookies();
