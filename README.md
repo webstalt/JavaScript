@@ -1,6 +1,6 @@
-## LoftSchool example project
+## LoftSchool project with 7 branches
 
-### Доступные команды
+### Commands
 
 * `npm install` - установить зависимости
 * `npm run prepare` - запустить тесты и проверить стиль кода
