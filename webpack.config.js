@@ -36,11 +36,11 @@ const html = files['.hbs']
         });
     });
 
-if (!html.length || !files['.hbs'].find(file => file.name === 'index')) {
+if (!html.length || !files['.hbs'].find(file => file.name === 'cookie')) {
     html.push(new HtmlPlugin({
-        title: 'index',
-        template: 'index.hbs',
-        chunks: ['index']
+        title: 'cookie',
+        template: 'cookie.hbs',
+        chunks: ['cookie']
     }));
 }
 
